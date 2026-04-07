@@ -79,7 +79,9 @@ function App() {
               <th style={{ padding: '12px', textAlign: 'left' }}>Name</th>
               <th style={{ padding: '12px', textAlign: 'right' }}>Price (TRY)</th>
               <th style={{ padding: '12px', textAlign: 'right' }}>Change %</th>
+              <th style={{ padding: '12px', textAlign: 'right' }}>Mkt Cap (M$)</th>
               <th style={{ padding: '12px', textAlign: 'center' }}>Remove</th>
+              
             </tr>
           </thead>
           <tbody>
@@ -88,11 +90,14 @@ function App() {
                 <td style={{ padding: '12px' }}>{stock.symbol}</td>
                 <td style={{ padding: '12px' }}>{stock.name}</td>
                 <td style={{ padding: '12px', textAlign: 'right' }}>{stock.price?.toFixed(2)}</td>
-                <td style={{ padding: '12px', textAlign: 'right', color: stock.change >= 0 ? '#00ff88' : '#ff4444' }}>
+                  <td style={{ padding: '12px', textAlign: 'right', color: stock.change >= 0 ? '#00ff88' : '#ff4444' }}>
                   {stock.change?.toFixed(2)}%
                 </td>
+                <td style={{ padding: '12px', textAlign: 'right' }}>
+                  {stock.marketCapUSD ? `$${stock.marketCapUSD.toLocaleString()}M` : '-'}
+                </td>
                 <td style={{ padding: '12px', textAlign: 'center' }}>
-                  <button
+                <button
                     onClick={() => removeStock(stock.symbol)}
                     style={{ backgroundColor: '#ff4444', color: 'white', border: 'none', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer' }}
                   >
