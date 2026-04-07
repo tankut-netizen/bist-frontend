@@ -15,9 +15,12 @@ function App() {
     fetch(`https://bist-dashboard-backend.onrender.com/bist?symbols=${syms.join(',')}`)
       .then(res => res.json())
       .then(data => {
-        setStocks(data);
+        if (Array.isArray(data)) {
+          setStocks(data);
+        }
         setLoading(false);
-      });
+      })
+      .catch(() => setLoading(false));
   };
 
   useEffect(() => {
