@@ -1,19 +1,36 @@
 import { useState, useEffect } from 'react';
 
+const DEFAULT_SYMBOLS = ['THYAO.IS', 'GARAN.IS', 'AKBNK.IS', 'EREGL.IS', 'BIMAS.IS'];
+
 function App() {
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [symbols, setSymbols] = useState(['THYAO.IS', 'GARAN.IS', 'AKBNK.IS', 'EREGL.IS', 'BIMAS.IS']);
+  const [symbols, setSymbols] = useState(() => {
+    const saved = localStorage.getItem('bistSymbols');
+    return saved ? JSON.parse(saved) : DEFAULT_SYMBOLS;
+  });
   const [input, setInput] = useState('');
 
-  useEffect(() => {
-    setLoading(true);
-    fetch(`https://bist-dashboard-backend.onrender.com/bist?symbols=${symbols.join(',')}`)
+  const fetchStocks = (syms) => {
+    fetch(`https://bist-dashboard-backend.onrender.com/bist?symbols=${syms.join(',')}`)
       .then(res => res.json())
       .then(data => {
         setStocks(data);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    localStorage.setItem('bistSymbols', JSON.stringify(symbols));
+    setLoading(true);
+    fetchStocks(symbols);
+  }, [symbols]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchStocks(symbols);
+    }, 60000);
+    return () => clearInterval(interval);
   }, [symbols]);
 
   const addStock = () => {
@@ -33,7 +50,7 @@ function App() {
   return (
     <div style={{ fontFamily: 'Arial', padding: '20px', backgroundColor: '#1a1a2e', minHeight: '100vh', color: 'white' }}>
       <h1 style={{ color: '#e94560' }}>📈 BIST Dashboard</h1>
-      
+
       <div style={{ marginBottom: '20px' }}>
         <input
           value={input}
@@ -48,6 +65,7 @@ function App() {
         >
           Add Stock
         </button>
+        <span style={{ marginLeft: '20px', fontSize: '12px', color: '#888' }}>Auto-refreshes every 60 seconds</span>
       </div>
 
       {loading ? <p>Loading...</p> : (
